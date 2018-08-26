@@ -1,4 +1,4 @@
-(defproject banks2ledger "1.2.0"
+(defproject banks2ledger "1.2.1"
   :description "Banks' CSV to ledger converter with probabilistic payment matching"
   :url "https://tomszilagyi.github.io/payment-matching"
   :license {:name "Eclipse Public License"
