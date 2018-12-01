@@ -278,7 +278,7 @@
 
 ;; Convert a double value to a canonically formatted amount
 (defn format-value [value]
-  (format "%,.2f" value))
+  (String/format java.util.Locale/US "%,.2f" (into-array Double [value])))
 
 ;; Convert CSV amount string - note the return value is still a string!
 (defn convert-amount [args-spec string]
@@ -297,7 +297,7 @@
 ;; e.g., returned by convert-amount
 (defn amount-value [amount]
   (let [pattern "#,#.#" ;; see java DecimalFormat
-        dfs (doto (java.text.DecimalFormatSymbols.))
+        dfs (doto (java.text.DecimalFormatSymbols. java.util.Locale/US))
         df (java.text.DecimalFormat. pattern dfs)]
     (->> amount
          (.parse df)
