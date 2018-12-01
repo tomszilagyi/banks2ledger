@@ -213,6 +213,7 @@
 
 
 
+; N.B.: CRLF line endings from here until EOF
 
 2016/02/15 Apotek Hjärtat Kärrtorp
     Expenses:HealthBeautyWellness         SEK 103.91
@@ -234,6 +235,7 @@
     Expenses:Clothing:Baby                SEK 249.00
     Assets:ICA Account
 
+
 2016/02/17 COOP KONSUM /16-02-15
     Expenses:Groceries:Coop               SEK 420.83
     Assets:SEB Account
@@ -253,6 +255,8 @@
 2016/02/23 COOP KONSUM /16-02-21
     Expenses:Groceries:Coop               SEK 104.85
     Assets:SEB Account
+
+
 
 2016/02/24 52903847839
     Assets:Sparkontot                     SEK 10,000.00

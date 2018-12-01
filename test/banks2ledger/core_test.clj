@@ -99,6 +99,14 @@
            '("2016/03/22 ICA NARA KAR/16-03-21"
              "Expenses:Groceries:ICA                SEK 314.32"
              "Assets:Bank account")))
+    ;; same input, but with CRLF line endings:
+    (is (= (split-ledger-entry
+            (str "2016/03/22 ICA NARA KAR/16-03-21\r\n"
+                 "    Expenses:Groceries:ICA                SEK 314.32\r\n"
+                 "    Assets:Bank account\r\n\r\n"))
+           '("2016/03/22 ICA NARA KAR/16-03-21"
+             "Expenses:Groceries:ICA                SEK 314.32"
+             "Assets:Bank account")))
     (is (= (split-ledger-entry
             (str "2016/02/16 Lindra Second Hand, Kärrtorp | Baby stuff\n"
                  "    Expenses:Clothing:Baby                 SEK 60.00\n"
@@ -331,6 +339,10 @@
     (is (= (get-col ["   " "2nd" "3rd"] "%0!%1%0!%2") "2nd"))
     (is (= (get-col (vec (map str (range 1 12))) "%10") "11"))))
 
+;; String containing the platform-dependent newline character, to verify
+;; that all tested output is produced with this newline encoding.
+(def NL (with-out-str (println)))
+
 (deftest test-print-ledger-entry
   (testing "print-ledger-entry"
     (is (= (with-out-str
@@ -342,10 +354,10 @@
                           :amount "123.45"
                           :currency "SEK"}
                          {:account "Assets:Pocket"}]}))
-           (str "2018-07-21 Custom Shop Extra\n"
-                "    ; This is a comment\n"
-                "    Expenses:Random                       SEK 123.45\n"
-                "    Assets:Pocket\n\n")))
+           (str "2018-07-21 Custom Shop Extra" NL
+                "    ; This is a comment" NL
+                "    Expenses:Random                       SEK 123.45" NL
+                "    Assets:Pocket" NL NL)))
     (is (= (with-out-str
              (print-ledger-entry
                {:date "2018-07-21"
@@ -356,10 +368,10 @@
                           :amount "123.45"
                           :currency "SEK"}
                          {:account "Assets:Pocket"}]}))
-           (str "2018-07-21 (1234567890) Custom Shop Extra\n"
-                "    ; This is a comment\n"
-                "    Expenses:Random                       SEK 123.45\n"
-                "    Assets:Pocket\n\n")))))
+           (str "2018-07-21 (1234567890) Custom Shop Extra" NL
+                "    ; This is a comment" NL
+                "    Expenses:Random                       SEK 123.45" NL
+                "    Assets:Pocket" NL NL)))))
 
 ;; Example hook formatters for testing
 ;; See also: https://tomszilagyi.github.io/2018/08/Custom-transactions-in-banks2ledger
@@ -428,14 +440,14 @@
                 :account "Assets:Bank:Account"
                 :amount "29,290.00"
                 :currency "SEK"}))
-           (str "2017/07/25 (TXN123456789) LÖN\n"
-                "    ; Pay stub data\n"
-                "    Tax:2017:GrossIncome                  SEK -00,000.00\n"
-                "    Tax:2017:IncomeTax                    SEK 0,000.00\n"
-                "    Tax:2017:NetIncome\n"
-                "    ; Distribution of net income\n"
-                "    Assets:Bank:Account                   SEK 29,290.00\n"
-                "    Income:Salary                         SEK -29,290.00\n\n")))
+           (str "2017/07/25 (TXN123456789) LÖN" NL
+                "    ; Pay stub data" NL
+                "    Tax:2017:GrossIncome                  SEK -00,000.00" NL
+                "    Tax:2017:IncomeTax                    SEK 0,000.00" NL
+                "    Tax:2017:NetIncome" NL
+                "    ; Distribution of net income" NL
+                "    Assets:Bank:Account                   SEK 29,290.00" NL
+                "    Income:Salary                         SEK -29,290.00" NL NL)))
     (is (= (with-out-str
              (advanced-salary-hook-formatter
                {:date "2018/07/25"
@@ -444,12 +456,12 @@
                 :account "Assets:Bank:Account"
                 :amount "27,365.00"
                 :currency "SEK"}))
-           (str "2018/07/25 (TXN123456789) LÖN\n"
-                "    ; Pay stub data\n"
-                "    Tax:2018:GrossIncome                  SEK -38,500.00\n"
-                "    Tax:2018:IncomeTax                    SEK 9,210.00\n"
-                "    Tax:2018:NetIncome\n"
-                "    ; Distribution of net income\n"
-                "    Income:Salary                         SEK -29,290.00\n"
-                "    Equity:SPP:Collect                    SEK 1,925.00\n"
-                "    Assets:Bank:Account                   SEK 27,365.00\n\n")))))
+           (str "2018/07/25 (TXN123456789) LÖN" NL
+                "    ; Pay stub data" NL
+                "    Tax:2018:GrossIncome                  SEK -38,500.00" NL
+                "    Tax:2018:IncomeTax                    SEK 9,210.00" NL
+                "    Tax:2018:NetIncome" NL
+                "    ; Distribution of net income" NL
+                "    Income:Salary                         SEK -29,290.00" NL
+                "    Equity:SPP:Collect                    SEK 1,925.00" NL
+                "    Assets:Bank:Account                   SEK 27,365.00" NL NL)))))

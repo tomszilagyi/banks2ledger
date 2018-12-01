@@ -90,16 +90,16 @@
         p_tab (p_table acc-maps tokens)]
 
     (if +debug+ (do
-      (printf "; Deciding \"%s\" for %s\n", descr, account)
-      (printf "; Tokens: ") (print tokens) (printf "\n")
-      (printf "; Account probabilities per token:\n")
+      (printf "; Deciding \"%s\" for %s%n", descr, account)
+      (printf "; Tokens: ") (print tokens) (newline)
+      (printf "; Account probabilities per token:%n")
       (doseq [tok tokens]
-        (printf ";  '%s':\n" tok)
+        (printf ";  '%s':%n" tok)
         (doseq [p (best-accounts acc-maps tok)]
-          (printf ";     %40s %f\n" (second p) (first p))))
-      (printf "; Combined probability table:\n")
+          (printf ";     %40s %f%n" (second p) (first p))))
+      (printf "; Combined probability table:%n")
       (doseq [e p_tab]
-        (printf ";     %40s %f\n" (second e) (first e)))))
+        (printf ";     %40s %f%n" (second e) (first e)))))
 
     (filter #(= false (.contains ^String (second %) account)) p_tab)))
 
@@ -125,7 +125,7 @@
 
 ;; Split ledger entry string to a sequence of separate lines
 (defn split-ledger-entry [entry]
-  (->> (clojure.string/split entry #"\n")
+  (->> (clojure.string/split entry #"\r?\n")
        (filter (complement is-comment-line))
        (map (partial clip-string ";"))
        (map clojure.string/trim)
@@ -142,7 +142,7 @@
 
 ;; Read and parse a ledger file; return acc-maps
 (defn parse-ledger [filename]
-  (->> (clojure.string/split (slurp filename) #"\n\n")
+  (->> (clojure.string/split (slurp filename) #"\r?\n\r?\n")
        (map clojure.string/trim) ;; remove odd newlines
        (filter #(> (count %) 0))
        (map split-ledger-entry)
@@ -400,9 +400,9 @@
             amount (:amount verif)]
         (if (nil? comment)
           (if (nil? amount)
-            (printf "    %s\n" account)
-            (printf "    %-38s%s %s\n" account (:currency verif) amount))
-          (printf "    ; %s\n" comment))))
+            (printf "    %s%n" account)
+            (printf "    %-38s%s %s%n" account (:currency verif) amount))
+          (printf "    ; %s%n" comment))))
     (println)))
 
 ;; generate verifications for the default case
