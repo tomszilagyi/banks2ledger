@@ -60,12 +60,12 @@
     (is (= (tokenize "COOP KONSUM /16-03-17")
            '("COOP" "KONSUM" "YY-MM-DD")))))
 
-(deftest test-p_occur
-  (testing "p_occur"
-    (is (= (p_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok1" "Acc1") 0.5))
-    (is (= (p_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok2" "Acc1") 0.25))
-    (is (= (p_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok4" "Acc1") 0.0))
-    (is (= (p_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok" "Acc2") 0.0))))
+(deftest test-n_occur
+  (testing "n_occur"
+    (is (= (n_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok1" "Acc1") 2))
+    (is (= (n_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok2" "Acc1") 1))
+    (is (= (n_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok4" "Acc1") 0))
+    (is (= (n_occur {"Acc1" {"tok1" 2, "tok2" 1, "tok3" 1}} "tok" "Acc2") 0))))
 
 (deftest test-p_belong
   (testing "p_belong"
@@ -74,21 +74,21 @@
            (float 1/2)))
     (is (f= (p_belong {"Acc1" {"tok1" 1, "tok2" 2},
                        "Acc2" {"tok1" 1, "tok2" 5}} "tok1" "Acc1")
-            (float (/ 1/3 (+ 1/3 1/6)))))
+            0.5))
     (is (f= (p_belong {"Acc1" {"tok1" 1, "tok2" 2},
-                       "Acc2" {"tok1" 1, "tok2" 5},
+                       "Acc2" {"tok1" 2, "tok2" 5},
                        "Acc3" {"tok1" 1, "tok2" 8}} "tok1" "Acc1")
-            (float (/ 1/3 (+ 1/3 1/6 1/9)))))))
+            0.25))))
 
 (deftest test-best-accounts
   (testing "best-accounts"
     (is (f= (best-accounts {"Acc1" {"tok1" 1, "tok2" 2},
-                            "Acc2" {"tok1" 1, "tok2" 8},
+                            "Acc2" {"tok1" 2, "tok2" 8},
                             "Acc3" {"tok2" 8},
-                            "Acc4" {"tok1" 1, "tok2" 5}} "tok1")
-            '([0.5454545454545454 "Acc1"]
-              [0.2727272727272727 "Acc4"]
-              [0.1818181818181818 "Acc2"])))))
+                            "Acc4" {"tok1" 5, "tok2" 5}} "tok1")
+            '([0.625 "Acc4"]
+              [0.25  "Acc2"]
+              [0.125 "Acc1"])))))
 
 (deftest test-split-ledger-entry
   (testing "split-ledger-entry"

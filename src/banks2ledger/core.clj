@@ -34,27 +34,23 @@
        (clojure.string/split #",|/| "))
    (filter #(> (count %) 0))))
 
-;; P_occur is the occurrence probability of token among
-;; all tokens recorded for account.
+;; N_occur is the occurrence count of token among all tokens
+;; recorded for account.
 ;; acc-maps is the output of parse-ledger.
-(defn p_occur [acc-maps token account]
-  (let [acc-table (get acc-maps account)
-        n_t_a (or (get acc-table token) 0)
-        n_all (apply + (vals acc-table))]
-    (if (= 0 n_all)
-      0.0
-      (/ (float n_t_a) n_all))))
+(defn n_occur [acc-maps token account]
+  (let [acc-table (get acc-maps account)]
+    (or (get acc-table token) 0)))
 
 ;; P_belong is the probability that a transaction with
 ;; token in its descriptor belongs to account.
 ;; acc-maps is the output of parse-ledger.
 (defn p_belong [acc-maps token account]
-  (let [p_occ (p_occur acc-maps token account)
-        p_occ_all (apply + (map (fn [acc] (p_occur acc-maps token acc))
+  (let [n_occ (n_occur acc-maps token account)
+        n_occ_all (apply + (map (fn [acc] (n_occur acc-maps token acc))
                                 (keys acc-maps)))]
-    (if (= 0.0 p_occ_all)
+    (if (= 0 n_occ_all)
       0.0
-      (/ p_occ p_occ_all))))
+      (/ (float n_occ) n_occ_all))))
 
 ;; Combine probability values according to the Bayes theorem
 (defn bayes* [probs]
