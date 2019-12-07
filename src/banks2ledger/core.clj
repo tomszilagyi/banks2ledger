@@ -150,6 +150,15 @@
        (map parse-ledger-entry)
        (reduce toktab-update {})))
 
+;; Produce a printout of the acc-maps passed as arg; useful for debugging
+(defn print-acc-maps [acc-maps]
+  (doseq [acc (sort (keys acc-maps))]
+    (printf "'%s':%n" acc)
+    (let [acc-map (get acc-maps acc)]
+      (doseq [tok-count (sort-by second > acc-map)]
+        (printf " %6d  '%s'%n" (second tok-count) (first tok-count))))
+    (println)))
+
 ;; command line args spec
 (def cl-args-spec
   (array-map
@@ -453,6 +462,11 @@
   (let [params (parse-args cl-args-spec args)
         acc-maps (parse-ledger (get-arg params :ledger-file))]
     (def +debug+ (get-arg params :debug))
+    (if +debug+
+      (let [acc-maps-dump-file (clojure.java.io/writer "acc_maps_dump.txt")]
+        (binding [*out* acc-maps-dump-file]
+          (print-acc-maps acc-maps))
+        (.close acc-maps-dump-file)))
     (if (not (nil? (get-arg params :hooks-file)))
       (load-file (get-arg params :hooks-file)))
     (with-open [reader (clojure.java.io/reader
